@@ -51,6 +51,7 @@ set (PROJECT_SOURCES
 	Sources/syscalls.c
 	Sources/sysmem.c
 	Sources/Keyboard.cpp
+	Sources/bsp_nucleo-f303re.cpp
 
 	)
 

@@ -29,7 +29,8 @@
 //============================================================================
 #include "sst.hpp"           // SST framework
 #include "bsp.hpp"           // Board Support Package interface
-#include "blinky.hpp"        // application shared interface
+#include "Globals.hpp"
+#include "Keyboard.hpp"
 #include "gpio.h"
 
 #include "stm32f3xx.h"
@@ -54,6 +55,8 @@ void SysTick_Handler(void);  // prototype
 void SysTick_Handler(void)
 { // system clock tick ISR
   SST::TimeEvt::tick();
+
+  ButtonDebounceHandler();
 }
 
 // Assertion handler =========================================================
@@ -102,7 +105,7 @@ void PVD_IRQHandler(void);
 
 void PVD_IRQHandler(void)
 {
-  App::AO_Blinky->activate();
+  LEDAO.activate();
 }
 
 #else // use reserved IRQs for SST Tasks
@@ -135,27 +138,9 @@ void init(void)
   __ISB();
   __DSB();
 
-  // assign IRQs to tasks. NOTE: critical for SST...
-#ifdef REGULAR_IRQS
-  // repurpose regular IRQs for SST Tasks
-  App::AO_Blinky->setIRQ(PVD_IRQn);
-#else
-    // use reserved IRQs for SST Tasks
-    App::AO_Blinky->setIRQ (14U);
-#endif
+  LEDAO.setIRQ(PVD_IRQn);
 
-#if 0
-    // enable GPIO port PA clock
-    RCC->IOPENR |= (1U << 0U);
-
-    // set all used GPIOA pins as push-pull output, no pull-up, pull-down
-    GPIOA->MODER  &= ~(3U << 2U*LED_PIN);
-    GPIOA->MODER  |=  (1U << 2U*LED_PIN);
-    GPIOA->OTYPER &= ~(1U <<    LED_PIN);
-    GPIOA->PUPDR  &= ~(3U << 2U*LED_PIN);
-#else
   MX_GPIO_Init();
-#endif
 }
 //............................................................................
 void ledOn(void)

@@ -29,75 +29,17 @@
 #include "gpio.h"
 #include "stm32f3xx.h"
 
-static void System_Init(void);
 
 LED_AO LEDAO;
 //............................................................................
 int main()
 {
   SST::init(); // initialize the SST kernel
-  System_Init();
+  BSP::init();
 
   static SST::Evt const * ledeventSto[10];
   LEDAO.start(1u, ledeventSto, ARRAY_NELEM(ledeventSto), nullptr);
 
   return SST::Task::run();
 
-
-}
-
-static void System_Init(void)
-{
-
-  /* Configure the MPU to prevent NULL-pointer dereferencing
-   * see: www.state-machine.com/null-pointer-protection-with-arm-cortex-m-mpu
-   */
-  MPU->RBAR = 0x0U /* base address (NULL) */
-  | MPU_RBAR_VALID_Msk /* valid region */
-  | (MPU_RBAR_REGION_Msk & 7U); /* region #7 */
-  MPU->RASR = (7U << MPU_RASR_SIZE_Pos) /* 2^(7+1) region */
-  | (0x0U << MPU_RASR_AP_Pos) /* no-access region */
-  | MPU_RASR_ENABLE_Msk; /* region enable */
-
-  MPU->CTRL = MPU_CTRL_PRIVDEFENA_Msk /* enable background region */
-  | MPU_CTRL_ENABLE_Msk; /* enable the MPU */
-  __ISB();
-  __DSB();
-
-  /* repurpose regular IRQs for SST Tasks */
-  LEDAO.setIRQ(PVD_IRQn);
-
-  MX_GPIO_Init();
-
-}
-
-
-namespace SST {
-
-void onStart(void) {
-    SystemCoreClockUpdate();
-
-    // set up the SysTick timer to fire at BSP::TICKS_PER_SEC rate
-    SysTick_Config((SystemCoreClock / BSP::TICKS_PER_SEC) + 1U);
-
-    // set priorities of ISRs used in the system
-    NVIC_SetPriority(SysTick_IRQn, 0U);
-    // ...
-}
-//............................................................................
-void onIdle(void) {
-#ifdef NDEBUG
-    // Put the CPU and peripherals to the low-power mode.
-    // you might need to customize the clock management for your application,
-    // see the datasheet for your particular Cortex-M MCU.
-    //
-    __WFI(); // Wait-For-Interrupt
-#endif
-}
-}
-extern "C"
-{
-void DBC_fault_handler(char const *const module, int const label)
-{
-}
 }

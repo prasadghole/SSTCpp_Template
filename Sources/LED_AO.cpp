@@ -5,8 +5,9 @@
  *      Author: pghole
  */
 
-#include "App.hpp"
 #include "LED_AO.hpp"
+#include "AppEvents.hpp"
+#include "bsp.hpp"
 
 LED_AO::LED_AO(void)
 {
@@ -21,8 +22,10 @@ void LED_AO::dispatch(const SST::Evt *const e)
   switch(e->sig)
   {
   case APP::LED_ON:
+    BSP::ledOn();
     break;
   case APP::LED_OFF:
+    BSP::ledOff();
     break;
 
   }
