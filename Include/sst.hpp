@@ -38,9 +38,6 @@ using Signal = std::uint16_t;
 class Evt {
 public:
     Signal sig;
-    Evt(Signal s) : sig(s)
-    {
-    }
 };
 
 // template for downcasting SST events to specific Evt "subclasses"

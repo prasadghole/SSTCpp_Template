@@ -19,12 +19,14 @@ namespace APP
   class LED_Evt : public SST::Evt
   {
   public:
-    uint32_t pin; /*< Pin number  */
-    LED_Evt(SST::Evt s, uint32_t p): Evt(s),pin(p)
+    LED_Evt(SST::Signal sig, uint32_t p)
     {
-
+      this->sig = sig;
+      pin = p;
     }
 
+  private:
+    uint32_t pin; /*< Pin number  */
   };
 
 }
