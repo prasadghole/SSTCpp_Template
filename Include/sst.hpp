@@ -35,8 +35,12 @@ namespace SST {
 //! signal of SST event
 using Signal = std::uint16_t;
 
-struct Evt {
+class Evt {
+public:
     Signal sig;
+    Evt(Signal s) : sig(s)
+    {
+    }
 };
 
 // template for downcasting SST events to specific Evt "subclasses"

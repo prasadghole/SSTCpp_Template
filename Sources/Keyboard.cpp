@@ -83,17 +83,19 @@ void ButtonDebounceHandler(void)
     if ((buttons.depressed & (1U << B1_PIN)) != 0U)
     {
       /* depressed? */
-      static const APP::LED_Evt pressEvt =
-      { APP::LED_ON, B1_PIN };
+      static const APP::LED_Evt pressEvt(APP::LED_ON,13);
+//      { APP::LED_ON, 13 };
 
-      LEDAO.post(&pressEvt.super);
+      const SST::Evt * pevt = &pressEvt;
+
+      LEDAO.post(&pressEvt);
     }
     else
     {
       /* B1 is released */
       static const APP::LED_Evt pressEvt =
       { APP::LED_OFF,  13 };
-      LEDAO.post(&pressEvt.super);
+//      LEDAO.post(static_cast<SST::Evt*>(&pressEvt));
 
     }
   }

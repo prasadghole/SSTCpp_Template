@@ -16,10 +16,15 @@ namespace APP
   {
     LED_ON, LED_OFF, MAX_SIG
   };
-  struct LED_Evt
+  class LED_Evt : public SST::Evt
   {
-    SST::Evt super;
+  public:
     uint32_t pin; /*< Pin number  */
+    LED_Evt(SST::Evt s, uint32_t p): Evt(s),pin(p)
+    {
+
+    }
+
   };
 
 }
